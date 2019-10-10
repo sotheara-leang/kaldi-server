@@ -4,7 +4,6 @@ import tornado.options
 import tornado.web
 import tornado.websocket
 
-from main.common.common import *
 from main.handler.main import *
 from main.handler.rest import *
 from main.handler.web_socket import *
@@ -19,8 +18,8 @@ class Application(tornado.web.Application):
         ]
 
         settings = dict(
-            template_path=os.path.join(os.path.dirname(__file__), get_file_path("web/view")),
-            static_path=os.path.join(os.path.dirname(__file__), get_file_path("web/resource")),
+            template_path=os.path.join(os.path.dirname(__file__), get_file_path("main/web/view")),
+            static_path=os.path.join(os.path.dirname(__file__), get_file_path("main/web/resource")),
             xsrf_cookies=False,
             debug=True
         )

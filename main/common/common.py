@@ -21,6 +21,13 @@ class AppContext(object):
 
         ctx['conf'] = self.conf
 
+        self.init_kaldi()
+
+    def init_kaldi(self):
+        if 'KALDI_ROOT' not in os.environ:
+            os.environ['KALDI_ROOT'] = self.conf.cfg['kaldi']['home']
+
+
 def logger(self):
     return logging.getLogger(self.__class__.__name__)
 
@@ -34,3 +41,6 @@ def get_proj_dir():
 
 def get_file_path(file: str):
     return os.path.join(get_proj_dir(), file)
+
+def get_tmp_dir():
+    return os.environ['KALDI_SRV_HOME'] + '/tmp'

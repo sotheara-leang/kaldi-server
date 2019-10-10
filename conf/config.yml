@@ -1,5 +1,9 @@
 server:
   port: 8080
 
+kaldi:
+    model: ${KALDI_SRV_HOME}/data/tri3
+    home: /Users/sotheara/Documents/Practice/niptict/asr/kaldi
+
 logging:
   enable: true

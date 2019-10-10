@@ -1,34 +1,38 @@
 import tornado.web
-import json
+import time
 
 from main.domain.response import *
 from main.service.sgmm2_decoder import *
+from main.service.decoder import *
 
 class RestHandler(tornado.web.RequestHandler):
 
     async def post(self):
-        response = None
-        if 'multipart/form-data' not in self.request.headers['Content-Type']:
+        response = Response.fail()
+        if 'multipart/form-data' not in self.request.headers['Content-Type'] or len(self.request.files) != 1:
             response = Response.invalid()
         else:
             for field_name, files in self.request.files.items():
-
-                if len(files) > 1:
-                    response = Response.invalid()
-                    break
-
                 file_info = files[0]
-
-                if file_info['content_type'] == 'audio/wav':
+                if file_info['content_type'] != 'audio/wav':
                     response = Response.invalid()
                     break
 
-                data = file_info["body"]
+                # save wav file
+                wav_dir = get_file_path('data/wav')
+                if not os.path.exists(wav_dir):
+                    os.makedirs(wav_dir)
 
-                decoder = SGMM2Decoder()
+                save_file = '%s/%s.wav' % (wav_dir, str(int(time.time())))
+                with open(save_file, 'w+b') as f_writer:
+                    data = file_info["body"]
+                    f_writer.write(data)
 
-                transcript = decoder.decode(data)
+                # decode wave file
+                decoder = Decoder()
+                transcript = decoder.decode(save_file)
 
+                # return response
                 response = Response.ok(transcript)
 
         self.write(response.__dict__)
