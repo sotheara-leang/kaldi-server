@@ -1,3 +1,5 @@
+decorator==4.4.0
 PyYAML==5.1.2
+singleton-decorator==1.0.0
 tornado==6.0.3
 ws4py==0.5.1
