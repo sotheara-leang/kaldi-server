@@ -14,7 +14,7 @@ class RemoteDecoder(object):
 
         # decode
         subprocess.call(
-            ['%s/kaldi/remote_decode.sh' % get_proj_dir(), str(conf('decode:server')), str(conf('decode:port')), wave_file, decode_dir])
+            ['%s/kaldi/remote_decode.sh' % get_proj_dir(), str(conf('kaldi:decode:server')), str(conf('kaldi:decode:port')), wave_file, decode_dir])
 
         # get transcript
         with open('%s/final_trans.txt' % decode_dir, 'r') as file:

@@ -2,13 +2,15 @@ server:
   port: 8080
 
 kaldi:
-    model: ${KALDI_SRV_HOME}/data/tri3
     home: /Users/sotheara/Documents/Practice/niptict/asr/kaldi
+    decode:
+      remote: false
 
-decode:
-    remote: false
-    server: localhost
-    port: 5010
+      model: ${KALDI_SRV_HOME}/data/tri3
+      sgmm2: false
+
+      server: localhost
+      port: 5010
 
 logging:
   enable: true

@@ -13,7 +13,7 @@ class SGMM2Decoder(object):
             os.makedirs(decode_dir)
 
         # decode
-        subprocess.call(['%s/kaldi/decode_sgmm2.sh' % get_proj_dir(), conf('kaldi:model'), wave_file, decode_dir])
+        subprocess.call(['%s/kaldi/decode_sgmm2.sh' % get_proj_dir(), conf('kaldi:decode:model'), wave_file, decode_dir])
 
         # get transcript
         with open('%s/final_trans.txt' % decode_dir, 'r') as file:

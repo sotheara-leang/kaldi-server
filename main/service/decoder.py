@@ -14,7 +14,7 @@ class Decoder(object):
 
         # decode
         subprocess.call(
-            ['%s/kaldi/decode.sh' % get_proj_dir(), conf('kaldi:model'), wave_file, decode_dir])
+            ['%s/kaldi/decode.sh' % get_proj_dir(), conf('kaldi:decode:model'), wave_file, decode_dir])
 
         # get transcript
         with open('%s/final_trans.txt' % decode_dir, 'r') as file:
