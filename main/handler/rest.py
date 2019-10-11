@@ -2,7 +2,7 @@ import tornado.web
 import time
 
 from main.domain.response import *
-from main.service.sgmm2_decoder import *
+from main.service.remote_decoder import *
 from main.service.decoder import *
 
 class RestHandler(tornado.web.RequestHandler):
@@ -29,7 +29,13 @@ class RestHandler(tornado.web.RequestHandler):
                     f_writer.write(data)
 
                 # decode wave file
-                decoder = Decoder()
+
+                is_remote = conf('decode:remote')
+                if is_remote is True:
+                    decoder = RemoteDecoder()
+                else:
+                    decoder = Decoder()
+
                 transcript = decoder.decode(save_file)
 
                 # return response
