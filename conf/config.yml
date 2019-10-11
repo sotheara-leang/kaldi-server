@@ -6,11 +6,11 @@ kaldi:
     decode:
       remote: false
 
-      model: ${KALDI_SRV_HOME}/data/tri3
-      sgmm2: false
+      model: ${KALDI_SRV_HOME}/data/sgmm2
+      sgmm2: true
 
       server: localhost
       port: 5010
 
 logging:
-  enable: true
+  enable: false
