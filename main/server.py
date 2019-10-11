@@ -4,9 +4,9 @@ import tornado.options
 import tornado.web
 import tornado.websocket
 
-from main.handler.main import *
-from main.handler.rest import *
-from main.handler.web_socket import *
+from main.handler.main_handler import *
+from main.handler.rest_handler import *
+from main.handler.web_socket_handler import *
 
 class Application(tornado.web.Application):
 
