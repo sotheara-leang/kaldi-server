@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-. $KALDI_SRV_HOME/conf/decode.conf
+. $KALDI_SRV_HOME/kaldi/conf/decode.conf
 
 . $KALDI_SRV_HOME/kaldi/init_env.sh
 

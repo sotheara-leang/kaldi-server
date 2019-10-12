@@ -12,35 +12,28 @@ ctx = globals()
 class AppContext(object):
 
     def __init__(self):
-        self.conf = Configuration(get_file_path('conf/config.yml'))
+        self.conf = Configuration(file_path('conf/config.yml'))
 
-        if self.conf.get('logging:enable') is True:
-            Logger(get_file_path('conf/logging.yml'))
+        if self.conf.get('logging-enable') is True:
+            Logger(file_path('conf/logging.yml'))
         else:
             logging.basicConfig(level=logging.DEBUG)
 
         ctx['conf'] = self.conf
 
-        self.init_kaldi()
-
-    def init_kaldi(self):
-        if 'KALDI_ROOT' not in os.environ:
-            os.environ['KALDI_ROOT'] = self.conf.cfg['kaldi']['home']
-
-
-def logger(self):
-    return logging.getLogger(self.__class__.__name__)
+def logger(name):
+    return logging.getLogger(name)
 
 def conf(key=None, default=None):
     if key is None:
         return ctx['conf']
     return ctx['conf'].get(key, default)
 
-def get_proj_dir():
+def proj_dir():
     return os.environ['KALDI_SRV_HOME']
 
-def get_file_path(file: str):
-    return os.path.join(get_proj_dir(), file)
+def file_path(file: str):
+    return os.path.join(proj_dir(), file)
 
-def get_tmp_dir():
-    return os.environ['KALDI_SRV_HOME'] + '/tmp'
+def tmp_dir():
+    return proj_dir() + '/tmp'

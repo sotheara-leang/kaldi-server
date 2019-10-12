@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [[ ! -d $KALDI_ROOT ]]; then
-  echo "kaldi folder not found -> local/setup/install.sh"
+  echo "kaldi folder not found -> source path.sh"
   exit 1
 fi
 

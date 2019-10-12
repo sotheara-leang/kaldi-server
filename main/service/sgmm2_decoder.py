@@ -8,12 +8,12 @@ class SGMM2Decoder(object):
 
     def decode(self, wave_file):
         # prepare decode dir
-        decode_dir = get_tmp_dir() + '/' + os.path.splitext(os.path.basename(wave_file))[0]
+        decode_dir = tmp_dir() + '/' + os.path.splitext(os.path.basename(wave_file))[0]
         if not os.path.exists(decode_dir):
             os.makedirs(decode_dir)
 
         # decode
-        subprocess.call(['%s/kaldi/decode_sgmm2.sh' % get_proj_dir(), conf('kaldi:decode:model'), wave_file, decode_dir])
+        subprocess.call(['%s/kaldi/decode_sgmm2.sh' % proj_dir(), conf('decode:model'), wave_file, decode_dir])
 
         # get transcript
         with open('%s/final_trans.txt' % decode_dir, 'r') as file:

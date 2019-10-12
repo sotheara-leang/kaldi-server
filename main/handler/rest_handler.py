@@ -6,18 +6,18 @@ from main.service.remote_decoder import *
 from main.service.sgmm2_decoder import *
 from main.service.decoder import *
 
+logger = logger(__name__)
+
 class RestHandler(tornado.web.RequestHandler):
 
     async def post(self):
-        _logger = logger(self)
-
         try:
             if 'Content-Type' not in self.request.headers \
                     or 'audio/wav' not in self.request.headers['Content-Type']:
                 response = Response.invalid()
             else:
                 # init wav folder
-                wav_dir = get_file_path('data/wav')
+                wav_dir = file_path('data/wav')
                 if not os.path.exists(wav_dir):
                     os.makedirs(wav_dir)
 
@@ -27,16 +27,16 @@ class RestHandler(tornado.web.RequestHandler):
                     f_writer.write(self.request.body)
 
                 # decode wave file
-                if conf('kaldi:decode:remote') is True:
+                if conf('decode:remote') is True:
                     decoder = RemoteDecoder()
-                elif conf('kaldi:decode:sgmm2'):
+                elif conf('decode:sgmm2'):
                     decoder = SGMM2Decoder()
                 else:
                     decoder = Decoder()
 
                 response = Response.ok(decoder.decode(save_file))
         except Exception as e:
-            _logger.error(e, exc_info=True)
+            logger.error(e, exc_info=True)
             response = Response.fail()
 
         self.write(response.__dict__)

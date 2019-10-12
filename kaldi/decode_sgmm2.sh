@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-. $KALDI_SRV_HOME/conf/decode_sgmm2.conf
+. $KALDI_SRV_HOME/kaldi/conf/decode_sgmm2.conf
 
 . $KALDI_SRV_HOME/kaldi/init_env.sh
 
@@ -13,7 +13,7 @@ bf=${bf%.wav}
 
 echo $bf $wav_file >> $decode_dir/wav.scp
 
-compute-mfcc-feats --config=$KALDI_SRV_HOME/conf/mfcc.conf \
+compute-mfcc-feats --config=$KALDI_SRV_HOME/kaldi/conf/mfcc.conf \
     scp:$decode_dir/wav.scp \
     ark,scp:$decode_dir/feats.ark,$decode_dir/feats.scp || exit 1
 

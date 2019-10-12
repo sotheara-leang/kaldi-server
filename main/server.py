@@ -14,12 +14,13 @@ class Application(tornado.web.Application):
         handlers = [
             (r"/", MainHandler),
             (r"/api/decode", RestHandler),
-            (r"/ws/decode", WebSocketHandler)
+            (r"/ws/decode", WebSocketHandler),
+            (r'/static/(.*)', tornado.web.StaticFileHandler, {'path': file_path('main/web/resource')})
         ]
 
         settings = dict(
-            template_path=os.path.join(os.path.dirname(__file__), get_file_path("main/web/view")),
-            static_path=os.path.join(os.path.dirname(__file__), get_file_path("main/web/resource")),
+            template_path=os.path.join(os.path.dirname(__file__), file_path("main/web/view")),
+            static_path=os.path.join(os.path.dirname(__file__), file_path("main/web/resource")),
             xsrf_cookies=False,
             debug=True
         )
@@ -29,7 +30,7 @@ def main():
     AppContext()
 
     app = Application()
-    app.listen(conf('server:port'))
+    app.listen(conf('server-port'))
 
     tornado.ioloop.IOLoop.current().start()
 
