@@ -23,7 +23,7 @@ class RestHandler(tornado.web.RequestHandler):
 
                 # save wave file
                 save_file = '%s/%s.wav' % (wav_dir, str(int(time.time())))
-                with open(save_file, 'w+b') as f_writer:
+                with open(save_file, 'wb') as f_writer:
                     f_writer.write(self.request.body)
 
                 # decode wave file
@@ -34,7 +34,7 @@ class RestHandler(tornado.web.RequestHandler):
                 else:
                     decoder = Decoder()
 
-                response = Response.ok(decoder.decode(save_file))
+                response = Response.ok(decoder.decode(save_file).strip())
         except Exception as e:
             logger.error(e, exc_info=True)
             response = Response.fail()
