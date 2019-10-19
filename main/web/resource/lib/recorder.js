@@ -1,12 +1,15 @@
+// Adapted from: https://github.com/mattdiamond/Recorderjs
+// With additions by Alex Popof - May 2014
 (function(window){
-
-  var WORKER_PATH = "static/lib/recorderWorker.js";
+  var WORKER_PATH = 'static/lib/recorderWorker.js';
 
   var Recorder = function(source, cfg){
     var config = cfg || {};
     var bufferLen = config.bufferLen || 4096;
     this.context = source.context;
-    this.node = this.context.createScriptProcessor(bufferLen, 1, 1);
+    this.node = (this.context.createScriptProcessor ||
+                 this.context.createJavaScriptNode).call(this.context,
+                                                         bufferLen, 2, 2);
     var worker = new Worker(config.workerPath || WORKER_PATH);
     worker.postMessage({
       command: 'init',
@@ -22,7 +25,8 @@
       worker.postMessage({
         command: 'record',
         buffer: [
-          e.inputBuffer.getChannelData(0)
+          e.inputBuffer.getChannelData(0),
+          e.inputBuffer.getChannelData(1)
         ]
       });
     }
@@ -62,35 +66,29 @@
       });
     }
 
-    this.exportRAW = function(cb, type){
+    this.export16kMonoWav = function(cb, resampledBuffer, type){
       currCallback = cb || config.callback;
-      type = type || config.type || 'audio/raw';
+      type = type || config.type || 'audio/wav';
       if (!currCallback) throw new Error('Callback not set');
+      
       worker.postMessage({
-        command: 'exportRAW',
-        type: type
-      });
-    }
-
-    this.export16kMono = function(cb, type){
-      currCallback = cb || config.callback;
-      type = type || config.type || 'audio/raw';
-      if (!currCallback) throw new Error('Callback not set');
-      worker.postMessage({
-        command: 'export16kMono',
-        type: type
+        command: 'export16kMonoWav',
+        type: type,
+        buffer: resampledBuffer
       });
     }
 
     worker.onmessage = function(e){
       var blob = e.data;
       currCallback(blob);
+
     }
 
     source.connect(this.node);
-    this.node.connect(this.context.destination);    //TODO: this should not be necessary (try to remove it)
+    this.node.connect(this.context.destination);    //this should not be necessary
   };
 
+  // downloads the wav data to filename
   Recorder.forceDownload = function(blob, filename){
     var url = (window.URL || window.webkitURL).createObjectURL(blob);
     var link = window.document.createElement('a');

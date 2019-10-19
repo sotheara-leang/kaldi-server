@@ -21,8 +21,8 @@
         </div>
         <div class="row m-3 s-5">
             <div class="col text-center">
-                <button type="button" class="btn btn-outline-primary" id="btnRecord">Record</button>
-                <button type="button" class="btn btn-outline-primary" id="btnStop">Stop</button>
+                <button type="button" class="btn btn-outline-primary" onclick="startRecording()" id="btnRecord" disabled>Record</button>
+                <button type="button" class="btn btn-outline-primary" onclick="stopRecording()" id="btnStop" disabled>Stop</button>
             </div>
         </div>
     </div>
@@ -31,8 +31,7 @@
 <script src="{{ static_url('lib/jquery-1.10.2.min.js') }}"></script>
 <script src="{{ static_url('lib/bootstrap.min.js') }}"></script>
 <script src="{{ static_url('lib/recorder.js') }}"></script>
-<script src="{{ static_url('lib/recorderWorker.js') }}"></script>
-<script src="{{ static_url('lib/dictate.js') }}"></script>
+<script src="{{ static_url('lib/resampler.js') }}"></script>
 <script src="{{ static_url('script/index.js') }}"></script>
 </body>
 </html>

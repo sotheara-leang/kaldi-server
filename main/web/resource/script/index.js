@@ -1,83 +1,102 @@
-var dictate = new Dictate({
-    server : "ws://localhost:8080/ws/decode",
-    onReadyForSpeech : function() {
-        __message("READY FOR SPEECH");
-        __status("Listening and transcribing...");
+window.AudioContext = window.AudioContext || window.webkitAudioContext;
+var context = new AudioContext();
 
-    },
-    onEndOfSpeech : function() {
-        __message("END OF SPEECH");
-        __status("Transcribing...");
+window.URL = window.URL || window.webkitURL;
+navigator.getUserMedia  = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
 
-        $('#btnStop').hide()
-	    $('#btnRecord').show()
-    },
+function createWebSocket(url) {
+    ws = new WebSocket(url);
 
-    onEndOfSession : function() {
-        __message("END OF SESSION");
-        __status("");
-    },
-    onPartialResults : function(hypos) {
-        console.log(hypos)
-    },
-    onResults : function(hypos) {
-        console.log(hypos)
-    },
-    onError : function(code, data) {
-        __error(code, data);
-        __status("Viga: " + code);
+    ws.onmessage = function(event) {
+        response = $.parseJSON(event.data)
 
-        dictate.cancel();
-    },
-    onEvent : function(code, data) {
-        __message(code, data);
-    }
-});
+        console.log('Server: ', response)
+
+        if (response.status == 0) {
+            $('#txtTrans').val(response.data);
+        } else {
+            alert('Server Internal Error')
+        }
+    };
+
+    ws.onopen = function(event) {
+
+    };
+
+    ws.onclose = function(event) {
+
+    };
+
+    ws.onerror = function(error) {
+        console.log('WebSocket Error: ' + error);
+        alert('Error Connecting to Server')
+    };
+
+    return ws;
+}
+
 
 function init() {
-	dictate.init();
+    if (navigator.getUserMedia) {
+        navigator.getUserMedia({audio: true}, function(s) {
+            console.log('Access microphone success');
 
-    $('#btnStop').hide()
+            var mediaStreamSource = context.createMediaStreamSource(s);
+            recorder = new Recorder(mediaStreamSource);
 
-	$('#btnRecord').click(function(e) {
-        $(this).hide()
-        $('#btnStop').show()
+            var url = "ws://localhost:8080/ws/decode";
+            createWebSocket(url);
 
-        startListening()
-	});
+            $('#btnRecord').attr("disabled", false);
+            $('#btnStop').attr("disabled", false);
 
-	$('#btnStop').click(function(e) {
-	    $(this).hide()
-        $('#btnRecord').show()
+        }, function(e) {
+            console.log('Access microphone rejected', e);
+            alert('Access microphone rejected', e);
+        });
 
-        stopListening()
-	});
+    } else {
+        console.log('navigator.getUserMedia() not present');
+        alert('Browser user media not present');
+    }
 }
 
-function startListening() {
-	dictate.startListening();
+function startRecording() {
+    recorder.record();
+
+    $('#txtTrans').val('');
+    $('#btnRecord').hide();
+    $('#btnStop').show();
 }
 
-function stopListening() {
-	dictate.stopListening();
+function stopRecording() {
+    recorder.stop();
+
+    $('#btnRecord').show();
+    $('#btnStop').hide();
+
+    recorder.getBuffer(function(s) {
+        // return value holds interleaved stereo audio data at mic's sample rate (44.1 or 48 kHz)
+        // "interleaved": indices alternate between left and right channels
+        var buffer = s;
+        var sampleRateFromMic = context.sampleRate;
+
+        // resample input stereo to 16khz stereo
+        // Resample args: inputRate, outputRate, numChannels, length of buffer, noReturn boolean
+        // since we want the returned value, noReturn is set to false
+        var resamplerObj = new Resampler(sampleRateFromMic, 16000, 2, buffer.length, false);
+        var resampledBuffer = resamplerObj.resampler(buffer);
+
+        // convert stereo to mono and export
+        recorder.export16kMonoWav(function(s) {
+            // send to server
+            ws.send(s);
+            recorder.clear();
+
+        }, resampledBuffer);
+    });
 }
 
-function cancel() {
-	dictate.cancel();
-}
-
-function __message(msg) {
-	console.log('Debug: ', msg)
-}
-
-function __error(msg) {
-	console.log('Error: ', msg)
-}
-
-function __status(msg) {
-	console.log('Status: ', msg)
-}
-
-window.onload = function() {
-	init();
-};
+$(document).ready(function() {
+   init();
+});

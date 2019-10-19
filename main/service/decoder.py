@@ -1,4 +1,3 @@
-import subprocess
 import shutil
 
 from main.common.common import *
@@ -13,8 +12,8 @@ class Decoder(object):
             os.makedirs(decode_dir)
 
         # decode
-        subprocess.call(
-            ['%s/kaldi/decode.sh' % proj_dir(), conf('decode:model'), wave_file, decode_dir])
+        cmd = ['%s/kaldi/decode.sh' % proj_dir(), conf('decode:model'), wave_file, decode_dir, '&> /dev/null']
+        os.system(' '.join(cmd))
 
         # get transcript
         with open('%s/final_trans.txt' % decode_dir, 'r') as file:
