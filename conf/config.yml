@@ -1,6 +1,6 @@
 server-port: 8080
 
-kaldi-root: /Users/sotheara/Documents/Practice/niptict/asr/kaldi
+kaldi-root: ./../kaldi
 
 decode:
   remote: false

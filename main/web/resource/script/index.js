@@ -50,6 +50,8 @@ function init() {
             $('#btnRecord').attr("disabled", false);
             $('#btnStop').attr("disabled", false);
 
+            $('#btnStop').hide();
+
         }, function(e) {
             console.log('Access microphone rejected', e);
             alert('Access microphone rejected', e);

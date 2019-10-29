@@ -11,17 +11,33 @@ if [[ -z $port ]]; then
     port=5010
 fi
 
-online-audio-server-decode-faster \
-    --verbose=1 \
-    --rt-min=$rt_min \
-    --rt-max=$rt_max \
-    --max-active=$max_active \
-    --beam=$beam \
-    --acoustic-scale=$acoustic_scale \
-    $model/final.mdl \
-    $model/HCLG.fst \
-    $model/words.txt \
-    $silence_phones \
-    $model/word_boundary.int \
-    $port \
-    $model/final.mat
+if [[ -f $model_dir/final.mat ]]; then
+    online-audio-server-decode-faster \
+        --verbose=1 \
+        --rt-min=$rt_min \
+        --rt-max=$rt_max \
+        --max-active=$max_active \
+        --beam=$beam \
+        --acoustic-scale=$acoustic_scale \
+        $model/final.mdl \
+        $model/HCLG.fst \
+        $model/words.txt \
+        $silence_phones \
+        $model/word_boundary.int \
+        $port \
+        $model/final.mat
+else
+     online-audio-server-decode-faster \
+        --verbose=1 \
+        --rt-min=$rt_min \
+        --rt-max=$rt_max \
+        --max-active=$max_active \
+        --beam=$beam \
+        --acoustic-scale=$acoustic_scale \
+        $model/final.mdl \
+        $model/HCLG.fst \
+        $model/words.txt \
+        $silence_phones \
+        $model/word_boundary.int \
+        $port
+fi
